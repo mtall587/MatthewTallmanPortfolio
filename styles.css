@@ -2,49 +2,44 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    box-sizing: border-box;
 }
 
 header {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem;
+    background-color: #f4f4f4;
+    padding: 20px;
     text-align: center;
-}
-
-nav {
-    margin: 1rem 0;
-    text-align: center;
-}
-
-nav a {
-    margin: 0 1rem;
-    color: #fff;
-    text-decoration: none;
-    background-color: #333;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-}
-
-nav a:hover {
-    background-color: #555;
 }
 
 main {
-    padding: 2rem;
+    padding: 20px;
 }
 
-section {
-    margin-bottom: 2rem;
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.image-grid {
+nav {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+nav button {
+    margin: 0 10px;
+}
+
+#portfolio-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
 }
 
-.image-grid img {
+#portfolio-grid img {
     width: 100%;
     height: auto;
 }
