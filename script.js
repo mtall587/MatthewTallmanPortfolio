@@ -10,7 +10,7 @@ function showCategory(category) {
     }
 }
 
-// Show the first category by default
+// Show the first category by default  32113
 document.addEventListener('DOMContentLoaded', () => {
     showCategory('category1');
 });
