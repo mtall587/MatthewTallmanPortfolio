@@ -4,13 +4,13 @@ function showCategory(category) {
 
     for (let i = 1; i <= 25; i++) {
         const img = document.createElement('img');
-        img.src = `images/${category}/image${i}.jpg`; // Adjust the image path and name as necessary
+        img.src = `static/images/${category}/image${i}.jpg`; // Adjust the image path and name as necessary
         img.alt = `Image ${i}`;
         portfolioGrid.appendChild(img);
     }
 }
 
-// Show the first category by default  32113
+// Show the first category by default
 document.addEventListener('DOMContentLoaded', () => {
     showCategory('category1');
 });

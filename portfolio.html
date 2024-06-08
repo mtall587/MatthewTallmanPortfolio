@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
-    <h1>Portfolio - {{ category }}</h1>
+    <header>
+        <h1>Portfolio - {{ category }}</h1>
+    </header>
     <nav>
         <button onclick="location.href='/images/Jason'">Jason Generations for test</button>
         <button onclick="location.href='/images/Damien'">Damien Generations as test</button>
     </nav>
-    <div class="portfolio-category">
+    <div id="portfolio-grid">
         <!-- Loop through images passed from the Flask app -->
         {% for image in images %}
             <img src="{{ image }}" alt="Image">
         {% endfor %}
     </div>
-    <script src="script.js"></script>
+    <script src="static/script.js"></script>
 </body>
 </html>
