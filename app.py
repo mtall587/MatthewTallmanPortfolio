@@ -1,40 +1,44 @@
-from flask import Flask, render_template, request, jsonify
-from azure.storage.blob import BlobServiceClient
 import os
+from flask import Flask, render_template, jsonify
+from azure.storage.blob import BlobServiceClient
 
 app = Flask(__name__)
 
-# Azure Blob Storage Configuration
-AZURE_STORAGE_CONNECTION_STRING = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
-CONTAINER_NAME = 'images'
+# Load connection string from environment variable
+connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
-blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
-container_client = blob_service_client.get_container_client(CONTAINER_NAME)
+if not connection_string:
+    raise ValueError("AZURE_STORAGE_CONNECTION_STRING environment variable not set")
 
-def list_blobs_in_category(category):
-    blob_list = container_client.list_blobs(name_starts_with=f"{category}/")
-    image_urls = []
-    for blob in blob_list:
-        image_url = f"https://{blob_service_client.account_name}.blob.core.windows.net/{CONTAINER_NAME}/{blob.name}"
-        image_urls.append(image_url)
-    return image_urls
+# Initialize the BlobServiceClient
+blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+
+# Define the categories and container names
+categories = {
+    'damien': 'Damien',
+    'jason': 'Jason'
+}
 
 @app.route('/')
-def home():
-    return render_template('index.html')
-
-@app.route('/portfolio')
 def portfolio():
     return render_template('portfolio.html')
 
-@app.route('/get_images')
-def get_images():
-    category = request.args.get('category')
-    if category in ['Damien', 'Jason']:
-        images = list_blobs_in_category(category)
-        return jsonify(images)
-    else:
-        return jsonify([])
+@app.route('/category/<category>')
+def get_images_by_category(category):
+    if category not in categories:
+        return jsonify({"error": "Category not found"}), 404
+
+    container_name = 'images'
+    folder_name = categories[category]
+    container_client = blob_service_client.get_container_client(container_name)
+
+    blob_list = container_client.list_blobs(name_starts_with=folder_name + '/')
+    image_urls = [
+        f"https://{blob_service_client.account_name}.blob.core.windows.net/{container_name}/{blob.name}"
+        for blob in blob_list
+    ]
+
+    return jsonify(image_urls)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
