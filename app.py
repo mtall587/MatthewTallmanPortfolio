@@ -1,18 +1,27 @@
-from flask import Flask, send_from_directory
+from flask import Flask, render_template, send_from_directory
+from azure.storage.blob import BlobServiceClient
 
 app = Flask(__name__)
 
-# Route for the home page
+# Initialize the connection to Azure Blob Storage
+connect_str = "<your-connection-string>"
+blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+container_name = "images"
+
 @app.route('/')
 def home():
     return send_from_directory('.', 'index.html')
 
-# Route for the portfolio page
-@app.route('/portfolio')
-def portfolio():
-    return send_from_directory('.', 'portfolio.html')
+@app.route('/portfolio/<category>')
+def portfolio(category):
+    # List all blobs in the container that match the category prefix
+    container_client = blob_service_client.get_container_client(container_name)
+    blob_urls = []
+    for blob in container_client.list_blobs(name_starts_with=category):
+        blob_url = f"https://{blob_service_client.account_name}.blob.core.windows.net/{container_name}/{blob.name}"
+        blob_urls.append(blob_url)
+    return render_template('portfolio.html', images=blob_urls, category=category)
 
-# Route for static files like CSS, JS, and images
 @app.route('/<path:path>')
 def static_files(path):
     return send_from_directory('.', path)

@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Portfolio</h1>
-    </header>
+    <h1>Portfolio - {{ category }}</h1>
     <nav>
-        <button onclick="showCategory('category1')">Category 1</button>
-        <button onclick="showCategory('category2')">Category 2</button>
-        <button onclick="showCategory('category3')">Category 3</button>
+        <button onclick="location.href='/portfolio/Jason'">Jason Generations for test</button>
+        <button onclick="location.href='/portfolio/Damien'">Damien Generations as test</button>
     </nav>
-    <main id="portfolio-grid">
-        <!-- Images will be inserted here by script.js -->
-    </main>
+    <div class="portfolio-category">
+        <!-- Loop through images passed from the Flask app -->
+        {% for image in images %}
+            <img src="{{ image }}" alt="Image">
+        {% endfor %}
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
