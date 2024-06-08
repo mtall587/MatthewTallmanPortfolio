@@ -4,7 +4,7 @@ from azure.storage.blob import BlobServiceClient
 app = Flask(__name__)
 
 # Initialize the connection to Azure Blob Storage
-connect_str = "<your-connection-string>"
+connect_str = "mKeGwYHEkF9Ttc2YTOrK/aGQ+wysLk0aAwWZ17nqRb+vVd1nrdX6eHOcETgtq9Trrmgo6fOpA7gx+AStzseghg=="
 blob_service_client = BlobServiceClient.from_connection_string(connect_str)
 container_name = "images"
 
@@ -12,7 +12,7 @@ container_name = "images"
 def home():
     return send_from_directory('.', 'index.html')
 
-@app.route('/portfolio/<category>')
+@app.route('/images/<category>')
 def portfolio(category):
     # List all blobs in the container that match the category prefix
     container_client = blob_service_client.get_container_client(container_name)
