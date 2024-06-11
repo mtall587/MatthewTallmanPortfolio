@@ -1,31 +1,45 @@
-from flask import Flask, request, jsonify, send_from_directory
-import os
+from flask import Flask, request, jsonify
 from azure.storage.blob import BlobServiceClient
+import os
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 
+# Azure Blob Storage connection string
 connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+if not connection_string:
+    raise ValueError("No Azure Storage connection string found in environment variables")
+
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
 @app.route('/')
 def home():
-    return '<h1>Welcome to My Portfolio</h1><a href="/portfolio">Go to Portfolio</a>'
+    return "Welcome to the Azure Blob Storage Flask app!"
 
-@app.route('/portfolio')
-def portfolio():
-    return '<h1>Portfolio</h1><button onclick="loadImages(\'Damien\')">Damien</button><button onclick="loadImages(\'Jason\')">Jason</button><div id="image-gallery" class="image-gallery"></div><script src="/static/script.js"></script>'
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return "No file part in the request", 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file", 400
 
-@app.route('/get_images')
-def get_images():
-    category = request.args.get('category')
-    container_client = blob_service_client.get_container_client(category)
-    blob_list = container_client.list_blobs()
-    images = [f"https://{blob_service_client.account_name}.blob.core.windows.net/{category}/{blob.name}" for blob in blob_list]
-    return jsonify(images)
+    try:
+        blob_client = blob_service_client.get_blob_client(container="mycontainer", blob=file.filename)
+        blob_client.upload_blob(file)
+        return f"File {file.filename} uploaded successfully.", 200
+    except Exception as e:
+        return str(e), 500
 
-@app.route('/static/<path:path>')
-def send_static(path):
-    return send_from_directory('static', path)
+@app.route('/list', methods=['GET'])
+def list_files():
+    try:
+        container_client = blob_service_client.get_container_client("mycontainer")
+        blob_list = container_client.list_blobs()
+        files = [blob.name for blob in blob_list]
+        return jsonify(files)
+    except Exception as e:
+        return str(e), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
