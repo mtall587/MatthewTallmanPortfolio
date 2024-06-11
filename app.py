@@ -18,7 +18,6 @@ def portfolio():
 @app.route('/get_images')
 def get_images():
     category = request.args.get('category')
-    # Example: Fetch images from Azure Blob Storage for the given category
     container_client = blob_service_client.get_container_client('images')
     blob_list = container_client.list_blobs(name_starts_with=category)
     image_urls = [blob.url for blob in blob_list]
